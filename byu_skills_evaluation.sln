@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "byu_skills_evaluation", "byu_skills_evaluation\byu_skills_evaluation.csproj", "{CCB26262-8529-44AE-926C-AA92DE707F0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octokit", "octokit.net\Octokit\Octokit.csproj", "{08DD4305-7787-4823-A53F-4D0F725A07F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{CCB26262-8529-44AE-926C-AA92DE707F0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCB26262-8529-44AE-926C-AA92DE707F0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCB26262-8529-44AE-926C-AA92DE707F0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08DD4305-7787-4823-A53F-4D0F725A07F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08DD4305-7787-4823-A53F-4D0F725A07F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08DD4305-7787-4823-A53F-4D0F725A07F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08DD4305-7787-4823-A53F-4D0F725A07F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

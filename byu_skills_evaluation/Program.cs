@@ -8,16 +8,27 @@ namespace byu_skills_evaluation
     {
         static void Main(string[] args)
         {
-            string orgName = "BYUMicrostructureResearch";
-
-            Console.WriteLine("Starting");
-
-            // get all users of an organization whose name is null
-            GithubOrgUsers goc = new GithubOrgUsers(orgName);
-            IEnumerable<User> noNameUsers = goc.FindMatchingUsers(x => x.Name == null);
-            foreach (User user in noNameUsers)
+            try
             {
-                Console.WriteLine(">>>" + user.Name + "|" + user.Login + "|" + user.Id + "<<<");
+                Console.WriteLine("Starting");
+
+                // set up data
+                string orgName = "BYUMicrostructureResearch";
+                Credentials githubCredentials = new Credentials("rdwyman", "FAKE");
+                
+                // get all users of an organization whose name is null
+                Console.WriteLine("Getting GitHub users for \"" + orgName + "\"");
+                GithubOrgUsers goc = new GithubOrgUsers(orgName, githubCredentials);
+                IEnumerable<User> noNameUsers = goc.FindMatchingUsers(x => x.Name == null);
+
+                // send email to users to tell them to add their name
+
+
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("\tFATAL ERROR: \"" + e.Message + "\"");
             }
 
             Console.WriteLine("Finished");

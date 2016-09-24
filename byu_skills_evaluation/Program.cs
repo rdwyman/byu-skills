@@ -12,21 +12,6 @@ namespace byu_skills_evaluation
         static void Main(string[] args)
         {
 
-            // OAuth token for github
-            // 89c96b37b25727198fce6f3f025b4904b21c51ff
-
-            //HttpWebRequest request = WebRequest.Create("https://github.com/api/v3/json/user/search/dkucinskas") as HttpWebRequest;
-            //request.Method = "GET";
-            //request.Proxy = null;
-            //using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-            //{
-            //    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-            //    {
-            //        Console.Write(reader.ReadToEnd());
-            //    }
-            //}
-            //Console.ReadKey();
-
             //try
             //{
             Console.WriteLine("Starting");

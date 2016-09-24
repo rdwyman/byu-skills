@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Octokit;
+using System;
 using System.Collections.Generic;
-using Octokit;
+using System.IO;
+using System.Linq;
+using System.Net;
 
 namespace byu_skills_evaluation
 {
@@ -8,28 +11,56 @@ namespace byu_skills_evaluation
     {
         static void Main(string[] args)
         {
-            try
-            {
-                Console.WriteLine("Starting");
 
-                // set up data
-                string orgName = "BYUMicrostructureResearch";
-                Credentials githubCredentials = new Credentials("rdwyman", "FAKE");
-                
-                // get all users of an organization whose name is null
-                Console.WriteLine("Getting GitHub users for \"" + orgName + "\"");
-                GithubOrgUsers goc = new GithubOrgUsers(orgName, githubCredentials);
-                IEnumerable<User> noNameUsers = goc.FindMatchingUsers(x => x.Name == null);
+            // OAuth token for github
+            // 89c96b37b25727198fce6f3f025b4904b21c51ff
 
-                // send email to users to tell them to add their name
+            //HttpWebRequest request = WebRequest.Create("https://github.com/api/v3/json/user/search/dkucinskas") as HttpWebRequest;
+            //request.Method = "GET";
+            //request.Proxy = null;
+            //using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+            //{
+            //    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+            //    {
+            //        Console.Write(reader.ReadToEnd());
+            //    }
+            //}
+            //Console.ReadKey();
+
+            //try
+            //{
+            Console.WriteLine("Starting");
+
+            // set up data
+            string orgName = "BYUMicrostructureResearch";
+            //string orgName = "test-ricky-byu-skills";
+            Credentials githubCredentials = new Credentials("rdwyman", "FAKE");
+            string sftpEmail = "chessofnerd@gmail.com";
+            NetworkCredential sftpCredentials = new NetworkCredential("chessofnerd", "FAKE");
+            string valediction = "Yours,\nRicky Wyman";
+
+            // get all users of an organization whose name is null
+            Console.WriteLine("Getting GitHub users for \"" + orgName + "\"");
+            GithubOrgUsers goc = new GithubOrgUsers(orgName, githubCredentials);
+            List<User> noNameUsers = goc.FindMatchingUsers(x => x.Name == null).ToList();
+
+            // send email to users to tell them to add their name
+            Console.WriteLine("Sending emails to users without name via \"" + sftpEmail + "\"");
+            List<string> noNameUserEmails = noNameUsers.ConvertAll(x => x.Email);
+            List<string[]> noNameUserTokens = noNameUsers.ConvertAll(x => new string[] { x.Login, x.Email, x.Url });
+            FormEmailSender fes = new FormEmailSender(sftpEmail, sftpCredentials);
+            List<bool> emailSuccess = fes.SendFormEmail(
+                "Hi, %s! You are part of the Github organization " + orgName
+                + ". I noticed you haven't added your name to your Github profile. Please use the link %s"
+                + " to update your profile!\n" + (valediction == null ? "Thanks!" : valediction)
+                , noNameUserEmails, noNameUserTokens);
 
 
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("\tFATAL ERROR: \"" + e.Message + "\"");
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine("\tFATAL ERROR: \"" + e.Message + "\"");
+            //}
 
             Console.WriteLine("Finished");
             Console.ReadKey();

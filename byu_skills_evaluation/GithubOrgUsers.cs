@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace byu_skills_evaluation
 {
-    internal class GithubOrgUsers
+    internal class GithubOrgUsersClient
     {
         private string orgName;
         IList<User> users;
 
-        public GithubOrgUsers(string orgName, Credentials githubCredentials)
+        internal GithubOrgUsersClient(string orgName, Credentials githubCredentials)
         {
             // set up a client
             try
@@ -50,10 +50,9 @@ namespace byu_skills_evaluation
             return await Task.WhenAll(diminishedUsers.Select(x => uc.Get(x.Login)));
         }
 
-        public IEnumerable<User> FindMatchingUsers(Func<User, bool> testFunc)
+        internal IEnumerable<User> FindMatchingUsers(Func<User, bool> testFunc)
         {
             return users.Where(testFunc);
         }
-
     }
 }

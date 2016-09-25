@@ -1,10 +1,8 @@
 ﻿using Octokit;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-
 
 namespace byu_skills_evaluation
 {
@@ -12,36 +10,48 @@ namespace byu_skills_evaluation
     {
         static void Main(string[] args)
         {
-
             //try
             //{
             Console.WriteLine("Starting");
 
-            // set up data
-            string orgName = "BYUMicrostructureResearch";
-            //string orgName = "test-ricky-byu-skills";
-            Credentials githubCredentials = new Credentials("rdwyman", "FAKE_PASSWORD");
+            // GitHub info
+            string gitOrgName = "BYUMicrostructureResearch";
+            //string gitOrgName = "test-ricky-byu-skills";
+            string gitLogin = "rdwyman";
+            string gitPassword = "FAKE";
+
+            // email info
             string sftpEmail = "chessofnerd@gmail.com";
-            NetworkCredential sftpCredentials = new NetworkCredential("chessofnerd", "FAKE_PASSWORD");
-            string valediction = "Yours,\nRicky Wyman";
+            string sftpHostAddress = "sftp.gmail.com";
+            string sftpUserName = "chessofnerd";
+            string sftpPassword = "FAKE_PASSWORD";
+            string subject = "About your Git hub profile";
+            string formMessage = "Hi, {0}! You are part of the Github organization " + gitOrgName
+                + ". I noticed you haven't added your name to your Github profile. Please use the link {1}"
+                + " to update your profile!\n";
+
+            // aws info
+            string awsAccessKey = "FAKE";
+            string awsSecretKey = "FAKE";
+            string awsBucket = "this-is-rickys-test-bucket";
+            string awsLogName = "MyLogFile";
 
             // get all users of an organization whose name is null
-            Console.WriteLine("Getting GitHub users for \"" + orgName + "\"");
-            GithubOrgUsers goc = new GithubOrgUsers(orgName, githubCredentials);
+            Console.WriteLine("Getting GitHub users for \"" + gitOrgName + "\"");
+            GithubOrgUsersClient goc = new GithubOrgUsersClient(gitOrgName, new Credentials(gitLogin, gitPassword));
             List<User> noNameUsers = goc.FindMatchingUsers(x => x.Name == null).ToList();
 
             // send email to users to tell them to add their name
             Console.WriteLine("Sending emails to users without name via \"" + sftpEmail + "\"");
             List<string> noNameUserEmails = noNameUsers.ConvertAll(x => x.Email);
             List<string[]> noNameUserTokens = noNameUsers.ConvertAll(x => new string[] { x.Login, x.HtmlUrl });
-            FormEmailSender fes = new FormEmailSender(sftpEmail, sftpCredentials);
-            List<bool> emailSuccess = fes.SendFormEmail(
-                "About your Github account","Hi, {0}! You are part of the Github organization " + orgName
-                + ". I noticed you haven't added your name to your Github profile. Please use the link {1}"
-                + " to update your profile!\n" + (valediction == null ? "Thanks!" : valediction)
-                , noNameUserEmails, noNameUserTokens);
+            FormEmailClient fec = new FormEmailClient(sftpEmail, sftpHostAddress, new NetworkCredential(sftpUserName, sftpPassword));
+            List<bool> emailSuccess = fec.SendFormEmail(
+                subject, formMessage, noNameUserEmails, noNameUserTokens);
 
-
+            // store users with no name field in an AWS bucket
+            LogAwsClient lac = new LogAwsClient(awsAccessKey, awsSecretKey);
+            lac.Log(awsBucket, awsLogName);
             //}
             //catch (Exception e)
             //{

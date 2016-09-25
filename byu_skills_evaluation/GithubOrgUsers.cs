@@ -11,13 +11,17 @@ namespace byu_skills_evaluation
         private string orgName;
         IList<User> users;
 
-        internal GithubOrgUsersClient(string orgName, Credentials githubCredentials)
+        /// <summary>
+        /// A client that uses Octokit to get users in an organization
+        /// </summary>
+        /// <param name="orgName">the organization to get users from</param>
+        /// <param name="credentials">Credentials to your personal GitHub account</param>
+        internal GithubOrgUsersClient(string orgName, Credentials credentials)
         {
-            // set up a client
             try
             {
                 this.orgName = orgName;
-                Task<User[]> task = InitUsers(githubCredentials);
+                Task<User[]> task = InitUsers(credentials);
                 task.Wait();
                 users = task.Result;
             }
@@ -35,6 +39,12 @@ namespace byu_skills_evaluation
             }
         }
 
+        /// <summary>
+        /// Query GitHub to get users in organization. This is not done 
+        /// in the constructor so that async capabilities can be used
+        /// </summary>
+        /// <param name="githubCredentials"></param>
+        /// <returns></returns>
         private async Task<User[]> InitUsers(Credentials githubCredentials)
         {
             GitHubClient ghClient = new GitHubClient(new ProductHeaderValue("git-hub-client-for-byu-skills-test"));
@@ -42,14 +52,19 @@ namespace byu_skills_evaluation
 
             // get the organization members
             IOrganizationMembersClient omc = ghClient.Organization.Member;
-            IReadOnlyList<User> diminishedUsers = await omc.GetAll(this.orgName);
+            IReadOnlyList<User> diminishedUsers = await omc.GetAll(orgName);
 
             // the users returned from an organization do not have all meta data. Get
-            // the complete users
+            // the complete users using the direct user client
             IUsersClient uc = ghClient.User;
             return await Task.WhenAll(diminishedUsers.Select(x => uc.Get(x.Login)));
         }
 
+        /// <summary>
+        /// Returns users matching a particular test function
+        /// </summary>
+        /// <param name="testFunc">the test function to determine if a user should be returned</param>
+        /// <returns>users passing the test function</returns>
         internal IEnumerable<User> FindMatchingUsers(Func<User, bool> testFunc)
         {
             return users.Where(testFunc);
